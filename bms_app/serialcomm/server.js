@@ -7,6 +7,9 @@ const EventEmitter = require('events');
 const insert = new EventEmitter();
 const app = express();
 const port = 8000;
+
+const MAX_VAL_VOLTS = 65535;
+
 app.use(cors());
 app.use(express.json());
 
@@ -17,7 +20,7 @@ const myPort = new SerialPort({
 const parser = myPort.pipe(new ReadlineParser({ delimiter: '\n' })); //Unix style new-line
 
 var data = {
-    volt: [Math.floor(Math.random() * 5), 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3],
+    volt: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //Default 0v/no connection
     temp: [Math.floor(Math.random() * 5), 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1],
     curr: [Math.floor(Math.random() * 5), 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2],
     static: [(3.00).toFixed(2), (0.00).toFixed(2), (1.00).toFixed(2), (2.00).toFixed(2),
@@ -89,7 +92,8 @@ function onData(receivedData) {
             // Update data based on the key
             if (key.startsWith('c')) {
                 const index = parseInt(key.slice(1)) - 1; // Convert 'c1', 'c2', etc. to array index
-                data.volt[index] = parseFloat(value) * 0.0001; // Update voltage data
+                // Update voltage data
+                data.volt[index] = (parseInt(value) === MAX_VAL_VOLTS) ? 0 : parseInt(value) * 0.0001; 
             }
         });
 
