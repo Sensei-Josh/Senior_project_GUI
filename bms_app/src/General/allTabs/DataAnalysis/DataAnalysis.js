@@ -83,6 +83,9 @@ function DataAnalysis() {
 	
 	const [BData, setData] = useState(initialData);
 
+	// Update total voltage
+	BData[0] = (Vdata.reduce((partialSum, a) => partialSum + a, 0)).toFixed(2);
+
 	useEffect(() => {
 		//Implementing the setInterval method
 		const interval = setInterval(Refresh, REFRESH_RATE);
