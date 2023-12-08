@@ -5,6 +5,7 @@ const { ReadlineParser } = require("@serialport/parser-readline");
 const EventEmitter = require('events');
 
 const insert = new EventEmitter();
+
 const app = express();
 const port = 8000;
 
@@ -16,6 +17,7 @@ app.use(express.json());
 const myPort = new SerialPort({
     path: "COM6", //Change
     baudRate: 115200
+
 });
 const parser = myPort.pipe(new ReadlineParser({ delimiter: '\n' })); //Unix style new-line
 
@@ -46,18 +48,25 @@ insert.on('start', () => {
 function getData() {
     myPort.write("h");
     return data;
+
 }
 
+//frontend requests data to /graphdata to which backend responds and sends data object
 app.get('/graphdata', (req, res) => {
+
     res.json(getData());
 });
 
+//backend goes to listening mode and "listens" for data sent from board
 app.listen(port, () => {
     console.log(`Server is running on port ${port}.`);
 });
 
 myPort.on('open', onOpen);
 parser.on('data', onData);
+
+var arrayIndex = 0;
+var mode = "";
 
 function onOpen() {
     console.log("Open Connection");

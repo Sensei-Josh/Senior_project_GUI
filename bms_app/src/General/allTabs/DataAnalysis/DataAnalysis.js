@@ -85,6 +85,7 @@ function DataAnalysis() {
 
 	useEffect(() => {
 		//Implementing the setInterval method
+
 		const interval = setInterval(Refresh, REFRESH_RATE);
 
 		//Clearing the interval
