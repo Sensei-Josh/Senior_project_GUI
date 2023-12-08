@@ -55,21 +55,37 @@ function onOpen() {
 	console.log("Open Connection");
 }
 
-//sent data is dealt with this function
-function onData(data) {
-	//console.log("Got: " + data);
+function onData(receivedData) {
+  console.log("Got: " + receivedData);
+  text = text + receivedData;
+  strindex++;
 
-	if (data === "v" || data === "t" || data === "i") {
-		mode = data;
-	}
+  // Check if the received data contains the start and end markers
+  if (text.startsWith("$") && text.includes("\n")) {
+      // Extract the data between '$' and '@'
+      const extractedData = text.substring(1, text.indexOf("\n"));
 
-	if(mode === "v") {
-		dataPackage.volt[arrayIndex] = data;
-	} else if (mode === "t") {
-		dataPackage.temp[arrayIndex] = data;
-	} else if (mode === "i") {
-		dataPackage.curr[arrayIndex] = data;
-	}
+      // Split the data into individual components
+      const components = extractedData.split(',');
 
-	arrayIndex = (arrayIndex + 1) % 12;
+      // Process each component and update the data object
+      components.forEach(component => {
+          const [key, value] = component.split('=');
+
+          // Update data based on the key
+          if (key.startsWith('c')) {
+              const index = parseInt(key.slice(1)) - 1; // Convert 'c1', 'c2', etc. to array index
+              data.volt[index] = parseFloat(value) * 0.0001; // Update voltage data
+          }
+      });
+
+      // Reset the text and strindex for the next data packet
+      text = "";
+      strindex++;
+
+      // Emit 'start' event if needed
+      if (strindex == 8) {
+          insert.emit('start');
+      }
+  }
 }
