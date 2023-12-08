@@ -83,9 +83,6 @@ function DataAnalysis() {
 	
 	const [BData, setData] = useState(initialData);
 
-	// Update total voltage
-	BData[0] = (Vdata.reduce((partialSum, a) => partialSum + a, 0)).toFixed(2);
-
 	useEffect(() => {
 		//Implementing the setInterval method
 		const interval = setInterval(Refresh, REFRESH_RATE);
@@ -141,13 +138,16 @@ function DataAnalysis() {
       		const obj = JSON.stringify(result, null, 4);
       		//setMessage(obj);
       		const arr = JSON.parse(obj);
-      		
+
 			setVdata(arr.volt);
       		setTdata(arr.temp);
       		setIdata(arr.curr);
 			setData(arr.static);
 			UpdateView();
 	}
+
+	// Update total voltage
+	BData[0] = parseFloat(Vdata.reduce((partialSum, a) => partialSum + a, 0)).toFixed(2);
 
 	return (
 		<div className = "BDA">
