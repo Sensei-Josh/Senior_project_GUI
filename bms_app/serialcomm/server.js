@@ -60,8 +60,8 @@ function onOpen() {
     console.log("Open Connection");
 
     // Simulate receiving the specified data directly in the code
-    const simulatedData = "$c1=34615,c2=34615,c3=34615,c4=34615,c5=34615,c6=34615,c7=34615,c8=34615,c9=34615,c10=34615,c11=34615,c12=34615,@\n";
-    onData(simulatedData);
+    // const simulatedData = "$c1=34615,c2=34615,c3=34615,c4=34615,c5=34615,c6=34615,c7=34615,c8=34615,c9=34615,c10=34615,c11=34615,c12=34615,@\n";
+    // onData(simulatedData);
 }
 
 function onData(receivedData) {
