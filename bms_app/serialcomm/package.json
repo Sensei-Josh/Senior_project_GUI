@@ -16,7 +16,7 @@
     "serialport": "^11.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.2"
   },
   "proxy": "http://localhost:8000"
 }
