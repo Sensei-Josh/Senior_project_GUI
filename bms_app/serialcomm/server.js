@@ -11,10 +11,10 @@ app.use(cors());
 app.use(express.json());
 
 const myPort = new SerialPort({
-    path: "COM4",
-    baudRate: 9600
+    path: "COM6", //Change
+    baudRate: 115200
 });
-const parser = myPort.pipe(new ReadlineParser({ delimiter: '\r\n' }));
+const parser = myPort.pipe(new ReadlineParser({ delimiter: '\n' })); //Unix style new-line
 
 var data = {
     volt: [Math.floor(Math.random() * 5), 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3],
@@ -59,20 +59,26 @@ parser.on('data', onData);
 function onOpen() {
     console.log("Open Connection");
 
-    // Simulate receiving the specified data directly in the code
-    // const simulatedData = "$c1=34615,c2=34615,c3=34615,c4=34615,c5=34615,c6=34615,c7=34615,c8=34615,c9=34615,c10=34615,c11=34615,c12=34615,@\n";
-    // onData(simulatedData);
+    //Simulate receiving the specified data directly in the code
+    //const simulatedData = "$c1=34615,c2=34615,c3=34615,c4=34615,c5=34615,c6=34615,c7=34615,c8=34615,c9=34615,c10=34615,c11=34615,c12=34615,@\n";
+    //onData();
 }
 
 function onData(receivedData) {
     console.log("Got: " + receivedData);
+
+    if (receivedData === undefined) {
+        return;
+    }
+
     text = text + receivedData;
     strindex++;
 
     // Check if the received data contains the start and end markers
-    if (text.startsWith("$") && text.includes("\n")) {
+    if (text.startsWith("$")) {
+
         // Extract the data between '$' and '@'
-        const extractedData = text.substring(text.indexOf("$"), text.indexOf("\n") + 1);
+        const extractedData = text.substring(text.indexOf("$")+1, text.indexOf("@"));
 
         // Split the data into individual components
         const components = extractedData.split(',');
@@ -80,13 +86,14 @@ function onData(receivedData) {
         // Process each component and update the data object
         components.forEach(component => {
             const [key, value] = component.split('=');
-
             // Update data based on the key
             if (key.startsWith('c')) {
                 const index = parseInt(key.slice(1)) - 1; // Convert 'c1', 'c2', etc. to array index
                 data.volt[index] = parseFloat(value) * 0.0001; // Update voltage data
             }
         });
+
+        //console.log(data);
 
         // Reset the text and strindex for the next data packet
         text = "";
